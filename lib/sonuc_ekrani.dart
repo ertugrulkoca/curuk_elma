@@ -16,28 +16,35 @@ class SonucEkrani extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text("Kazanç: $sonuc",
-                style: GoogleFonts.architectsDaughter(fontSize: 30)),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Color(0xFFFFC61F)),
-              ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AnaEkran(),
-                  ),
-                );
-              },
-              child: Text("Tekrar Oyna",
-                  style: GoogleFonts.architectsDaughter(
-                      fontSize: 26, color: Colors.white)),
-            ),
+            kazancText(),
+            tekrarOynaButton(context),
           ],
         ),
       ),
+    );
+  }
+
+  Text kazancText() {
+    return Text("Kazanç: $sonuc",
+        style: GoogleFonts.architectsDaughter(fontSize: 30));
+  }
+
+  ElevatedButton tekrarOynaButton(BuildContext context) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFFFC61F)),
+      ),
+      onPressed: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AnaEkran(),
+          ),
+        );
+      },
+      child: Text("Tekrar Oyna",
+          style: GoogleFonts.architectsDaughter(
+              fontSize: 26, color: Colors.white)),
     );
   }
 }

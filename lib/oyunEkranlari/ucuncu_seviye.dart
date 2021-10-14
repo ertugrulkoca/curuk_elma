@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:curuk_elma/ana_ekran.dart';
-import 'package:curuk_elma/components/game_button.dart';
 import 'package:curuk_elma/components/kazanc.dart';
 import 'package:curuk_elma/components/uyari.dart';
 import 'package:curuk_elma/oyunEkranlari/dorduncu_seviye.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: camel_case_types, must_be_immutable
 class ucuncuSeviye extends StatefulWidget {
   late double ucret;
   ucuncuSeviye({
@@ -20,6 +20,7 @@ class ucuncuSeviye extends StatefulWidget {
   _ucuncuSeviyeState createState() => _ucuncuSeviyeState();
 }
 
+// ignore: camel_case_types
 class _ucuncuSeviyeState extends State<ucuncuSeviye> {
   late double ucret;
   Random random = new Random();
@@ -58,110 +59,118 @@ class _ucuncuSeviyeState extends State<ucuncuSeviye> {
               curukleriGoster: curukleriGoster,
               ucret: ucret,
               fontsize: fontsize),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.all(20),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    width: genislik,
-                    height: yukseklik,
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 6,
-                      ),
-                      itemCount: 36,
-                      itemBuilder: (context, indeks) {
-                        return InkWell(
-                          onTap: () {
-                            if (curukleriGoster == false) {
-                              setState(() {
-                                bool curukMu = tiklandi(indeks);
-                                if (curukMu) {
-                                  curukleriGoster = true;
-                                  onAlertButtonPressed(context, "YANDIN!");
-                                } else {
-                                  if (satirKontrol) {
-                                    onAlertButtonPressed(context,
-                                        "Lütfen sıradaki satırdan seçin");
-                                    satirKontrol = false;
-                                  } else {
-                                    if (kazandinMi) {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              dorduncuSeviye(ucret: ucret),
-                                        ),
-                                      );
-                                    }
-                                    fontsize = fontsize + 2;
-                                    tikladiklari.add(indeks);
-                                  }
-                                }
-                              });
-                            }
-                          },
-                          child: Card(
-                            child: curukleriGoster == true
-                                ? (curukElmalar.contains(indeks)
-                                    ? Image.asset('images/curuk.png')
-                                    : Image.asset('images/elma.png'))
-                                : tikladiklari.contains(indeks)
-                                    ? Image.asset('images/elma.png')
-                                    : image,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Color(0xFFFFC61F)),
-                    ),
-                    onPressed: () {
-                      if (curukleriGoster) {
+          oyunEkrani(genislik, yukseklik, context),
+        ],
+      ),
+    );
+  }
+
+  Expanded oyunEkrani(double genislik, double yukseklik, BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+        ),
+        child: Column(
+          children: [
+            gridYapisi(genislik, yukseklik),
+            bahistenCekilButton(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container gridYapisi(double genislik, double yukseklik) {
+    return Container(
+      width: genislik,
+      height: yukseklik,
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 6,
+        ),
+        itemCount: 36,
+        itemBuilder: (context, indeks) {
+          return InkWell(
+            onTap: () {
+              if (curukleriGoster == false) {
+                setState(() {
+                  bool curukMu = tiklandi(indeks);
+                  if (curukMu) {
+                    curukleriGoster = true;
+                    onAlertButtonPressed(context, "YANDIN!");
+                  } else {
+                    if (satirKontrol) {
+                      onAlertButtonPressed(
+                          context, "Lütfen sıradaki satırdan seçin");
+                      satirKontrol = false;
+                    } else {
+                      if (kazandinMi) {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AnaEkran(),
-                          ),
-                        );
-                      } else {
-                        bakiyeArttir(ucret);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SonucEkrani(sonuc: ucret),
+                            builder: (context) => dorduncuSeviye(ucret: ucret),
                           ),
                         );
                       }
-                    },
-                    child: Text(
-                        curukleriGoster ? "Yeniden oyna" : "Bahisten Çekil",
-                        style: GoogleFonts.architectsDaughter(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w900,
-                        )),
-                  ),
-                  // GameButton(curukleriGoster: curukleriGoster, ucret: ucret),
-                ],
-              ),
+                      fontsize = fontsize + 2;
+                      tikladiklari.add(indeks);
+                    }
+                  }
+                });
+              }
+            },
+            child: Card(
+              child: curukleriGoster == true
+                  ? (curukElmalar.contains(indeks)
+                      ? Image.asset('images/curuk.png')
+                      : Image.asset('images/elma.png'))
+                  : tikladiklari.contains(indeks)
+                      ? Image.asset('images/elma.png')
+                      : image,
             ),
-          ),
-        ],
+          );
+        },
       ),
+    );
+  }
+
+  ElevatedButton bahistenCekilButton(BuildContext context) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFFFC61F)),
+      ),
+      onPressed: () {
+        if (curukleriGoster) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AnaEkran(),
+            ),
+          );
+        } else {
+          bakiyeArttir(ucret);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SonucEkrani(sonuc: ucret),
+            ),
+          );
+        }
+      },
+      child: Text(curukleriGoster ? "Yeniden oyna" : "Bahisten Çekil",
+          style: GoogleFonts.architectsDaughter(
+            fontSize: 30,
+            fontWeight: FontWeight.w900,
+          )),
     );
   }
 
